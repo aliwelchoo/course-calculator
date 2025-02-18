@@ -1,0 +1,41 @@
+name: Run Unit Test via Pytest
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9"]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Lint with Ruff
+        run: |
+          pip install ruff
+          ruff format
+          ruff check --fix --unsafe-fixes .
+        continue-on-error: true      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Test with pytest
+        run: |
+          pip install pytest coverage
+          coverage run -m pytest  -v -s
+      - name: Generate Coverage Report
+        run: |
+          coverage report -m
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "aliwelchoo"
+          git config --global user.email "aliwelchoo@live.com"
+      
+          git add -u 
+          git commit -m "ruff auto fix and format" || echo "No changes to commit"
+          git push
