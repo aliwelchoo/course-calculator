@@ -13,13 +13,13 @@ def article():
     pass
 
 
-@when("I go to the article page")
-def go_to_article():
+@when("I go to the course breakdown page")
+def go_to_course_breakdown():
     pass
 
 
-@when("I press the publish button")
-def publish_article():
+@when("I put a new module name in the new module input")
+def new_module_add_name():
     pass
 
 
