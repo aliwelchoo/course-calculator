@@ -1,9 +1,15 @@
 import dash
-from dash import Dash, html, dcc
-
 import dash_bootstrap_components as dbc
+from dash import html, dcc
+from dash_extensions.enrich import DashProxy
 
-app = Dash(__name__, use_pages=True)
+app = DashProxy(
+    __name__,
+    use_pages=True,
+    external_stylesheets=[
+        "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css",
+        dbc.themes.FLATLY
+    ])
 
 app.layout = dbc.Container(dbc.Row(
     [
@@ -12,16 +18,18 @@ app.layout = dbc.Container(dbc.Row(
             [
                 html.Div(
                     dcc.Link(
-                        f"{page['name']} - {page['path']}", href=page["relative_path"]
+                        page['name'], href=page["relative_path"]
                     )
                 )
                 for page in dash.page_registry.values()
             ]
         ),
-        dbc.Row(dash.page_container),
+        dbc.Row(dbc.Col(dash.page_container, width={"size": 8, "offset": 2})),
+        dcc.Store(id="user")
     ]),
     fluid=True
 )
 
 if __name__ == "__main__":
     app.run(debug=True)
+

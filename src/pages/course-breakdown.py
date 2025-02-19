@@ -1,18 +1,17 @@
 import dash
-from dash import html, dcc
+from dash import html
 import dash_bootstrap_components as dbc
 
 dash.register_page(__name__)
 
 layout = dbc.Row(
     [
-        html.H1("Course Breakdown"),
+        html.H2("Course Breakdown"),
 
         dbc.InputGroup([
-            dbc.InputGroupText("Module name"),
+            dbc.InputGroupText("New Module"),
             dbc.Input(placeholder="Enter name.."),
             dbc.Button("+", id="add_module")
         ])
-
     ]
 )
