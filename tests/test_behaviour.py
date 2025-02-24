@@ -17,7 +17,7 @@ def run_app(dash_duo):
     assert dash_duo.get_logs() == [], "browser console should contain no error"
 
 
-@given("I am {user}")
+@given(parsers.parse("I am {user}"))
 def logged_in_as(user):
     with patch.object(services, "data", MockUserDB([])):
         application.login(user)
