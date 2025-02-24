@@ -2,7 +2,7 @@ import dash
 from dash_extensions.enrich import html, callback, State, Trigger
 import dash_bootstrap_components as dbc
 
-from src import application
+from src.services import application
 
 dash.register_page(__name__, path="/")
 

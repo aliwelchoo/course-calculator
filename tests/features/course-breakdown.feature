@@ -1,22 +1,27 @@
 Feature: Course breakdown
     A site where you can detail the module and credit breakdown of your course.
 
-    Scenario: Creating a new module
-        When I go to the course breakdown page
-        And I put a new module name in the new module input
-        And I press the add module button
-        Then the module should be added to my course
+    Background:
+        Given the site is running without error
+        And I am test_user
 
-    Scenario: Creating an existing module
-        Given I have modules in my course breakdown
+    Scenario: Adding a new module
         When I go to the course breakdown page
-        And I put an existing module name in the new module input
+        And I put new_module_name in the new module input
         And I press the add module button
-        Then the module should not be added to my course
+        Then new_module_name should be in my course
+
+    Scenario: Adding an existing module
+        Given I have existing_module_name module in my course breakdown
+        When I go to the course breakdown page
+        And I put an existing_module_name in the new module input
+        And I press the add module button
+        Then existing_module_name should not be in my course
         And the duplicate module error should be shown
 
     Scenario: Updating an existing module
-        Given I have "existing_module" in my course breakdown
+        Given I have existing_module_name in my course breakdown
         When I go to the course breakdown page
-        And I put "new_module" in the "existing_module" name input
-        Then "new_module" should replace "existing_module" in my course breakdown
+        And I put new_module_name in the existing_module_name name input
+        Then existing_module_name should not be in my course
+        And new_module_name should be in my course

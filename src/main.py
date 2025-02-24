@@ -18,7 +18,7 @@ app.layout = dbc.Container(dbc.Row(
             [
                 html.Div(
                     dcc.Link(
-                        page['name'], href=page["relative_path"]
+                        page['name'], href=page["relative_path"], id=page["name"]+'-link'
                     )
                 )
                 for page in dash.page_registry.values()
