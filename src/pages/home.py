@@ -1,5 +1,5 @@
 import dash
-from dash_extensions.enrich import html, callback, State, Trigger
+from dash_extensions.enrich import html, callback, State, Trigger, Output
 import dash_bootstrap_components as dbc
 
 from src.services import application
@@ -19,8 +19,10 @@ layout = html.Div(
 
 
 @callback(
+    Output("user", "data"),
     Trigger("login_user", "n_clicks"),
-    State("user_input", "children")
+    State("user_input", "value")
 )
 def login(name):
-    application.login(name)
+    user = application.login(name)
+    return user.attrs

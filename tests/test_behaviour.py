@@ -1,10 +1,6 @@
-from unittest.mock import patch
-
 from pytest_bdd import scenarios, given, when, then, parsers
 
-from src import services
-from src.data import MockUserDB
-from src.main import app
+from src.app import app
 from src.services import application
 
 scenarios("features")
@@ -19,9 +15,7 @@ def run_app(dash_duo):
 
 @given(parsers.parse("I am {user}"))
 def logged_in_as(user):
-    with patch.object(services, "data", MockUserDB([])):
-        application.login(user)
-        yield
+    application.login(user)
 
 
 @given(parsers.parse("I have {module_name} module in my course breakdown"))
@@ -37,8 +31,7 @@ def go_to_course_breakdown(dash_duo):
 
 @when(parsers.parse("I put {module_name} in the new module input"))
 def new_module_add_name(module_name, dash_duo):
-    name_input = dash_duo.find_element("#new_module_name")
-    name_input.send_keys(module_name)
+    dash_duo.find_element("#new_module_name").send_keys(module_name)
 
 
 @when("I put {new_module_name} in the {existing name} name input")
@@ -47,13 +40,14 @@ def existing_module_add_name(new_module_name, existing_module_name):
 
 
 @when("I press the add module button")
-def click_add_module():
-    pass
+def click_add_module(dash_duo):
+    dash_duo.find_element("#new_module_name").click()
 
 
 @then("{module_name} should be in my course")
 def module_in_course(module_name):
-    pass
+    assert module_name in application.get_user().modules
+    assert False
 
 
 @then("{module_name} should be in my course")
