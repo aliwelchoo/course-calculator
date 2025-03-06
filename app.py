@@ -8,31 +8,33 @@ app = DashProxy(
     use_pages=True,
     external_stylesheets=[
         "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css",
-        dbc.themes.FLATLY
+        dbc.themes.FLATLY,
     ],
     transforms=[TriggerTransform()],
     prevent_initial_callbacks=True,
 )
 
-app.layout = dbc.Container(dbc.Row(
-    [
-        html.H1("Course Calculator"),
-        html.Div(
-            [
-                html.Div(
-                    dcc.Link(
-                        page['name'], href=page["relative_path"], id=page["name"]+'-link'
+app.layout = dbc.Container(
+    dbc.Row(
+        [
+            html.H1("Course Calculator"),
+            html.Div(
+                [
+                    html.Div(
+                        dcc.Link(
+                            page["name"],
+                            href=page["relative_path"],
+                            id=page["name"] + "-link",
+                        )
                     )
-                )
-                for page in dash.page_registry.values()
-            ]
-        ),
-        dbc.Row(dbc.Col(dash.page_container, width={"size": 8, "offset": 2})),
-        dcc.Store(id="user")
-    ]),
-    fluid=True
+                    for page in dash.page_registry.values()
+                ]
+            ),
+            dbc.Row(dbc.Col(dash.page_container, width={"size": 8, "offset": 2})),
+        ]
+    ),
+    fluid=True,
 )
 
 if __name__ == "__main__":
     app.run(debug=True)
-

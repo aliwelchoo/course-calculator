@@ -1,4 +1,4 @@
-from time import sleep
+from time import sleep, time
 
 from pytest_bdd import scenarios, given, when, then, parsers
 
@@ -9,6 +9,10 @@ from services import create_services
 scenarios("features")
 
 
+def pattern_matching_selector(index: int, type: str) -> str:
+    return r'#\{\"index\"\:' + str(index)+r'\,\"type\"\:\"'+type+r'\"\}'
+
+
 def wait_for_callbacks(dash_duo):
     sleep(1)
     dash_duo._wait_for_callbacks()
@@ -16,9 +20,11 @@ def wait_for_callbacks(dash_duo):
 
 @given("the site is running without error")
 def run_app(dash_duo):
+    dash_duo._last_ts = time()
     dash_duo.start_server(app, port=8060)
     dash_duo.wait_for_page(timeout=20)
     services.application = create_services()
+    wait_for_callbacks(dash_duo)
     assert dash_duo.get_logs() == [], "browser console should contain no error"
 
 
@@ -37,6 +43,7 @@ def module_already_in_course(module_name):
 @when("I go to the course breakdown page")
 def go_to_course_breakdown(dash_duo):
     dash_duo.multiple_click("#Course-breakdown-link", 1)
+    wait_for_callbacks(dash_duo)
 
 
 @when(parsers.parse("I put {module_name} in the new module input"))
@@ -44,14 +51,24 @@ def new_module_add_name(module_name, dash_duo):
     dash_duo.find_element("#new_module_name").send_keys(module_name)
 
 
-@when(parsers.parse("I put {new_module_name} in the {existing name} name input"))
-def existing_module_add_name(new_module_name, existing_module_name):
-    pass
+@when(parsers.parse("I put {new_module_name} in the {existing_module_name} name input"))
+def existing_module_add_name(dash_duo, new_module_name, existing_module_name):
+    existing_index = services.application.get_user().get_modules().index(existing_module_name)
+    name_input = dash_duo.find_element(pattern_matching_selector(existing_index, "modules"))
+    name_input.clear()
+    name_input.send_keys(new_module_name)
 
 
 @when("I press the add module button")
 def click_add_module(dash_duo):
     dash_duo.find_element("#add_module").click()
+    wait_for_callbacks(dash_duo)
+
+
+@when(parsers.parse("I press the {existing_module_name} update button"))
+def click_update_module(dash_duo, existing_module_name):
+    existing_index = services.application.get_user().get_modules().index(existing_module_name)
+    dash_duo.find_element(pattern_matching_selector(existing_index, "update_module_name")).click()
     wait_for_callbacks(dash_duo)
 
 
