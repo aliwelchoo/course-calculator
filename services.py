@@ -1,11 +1,13 @@
+from typing import Type
+
 from application import Application
-from data import UserDB, MockUserDB
+from data import UserDB, JsonUserDB
 
 
-def create_services() -> Application:
-    blank_data: UserDB = MockUserDB()
-    blank_application: Application = Application(None, blank_data)
-    return blank_application
+def create_services(db: Type[UserDB]) -> Application:
+    data: UserDB = db()
+    app: Application = Application(None, data)
+    return app
 
 
-application: Application = create_services()
+application: Application = create_services(JsonUserDB)

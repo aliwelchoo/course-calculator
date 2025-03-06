@@ -1,4 +1,5 @@
 import dash
+from dash import dcc, Output
 from dash_extensions.enrich import html, callback, State, Trigger
 import dash_bootstrap_components as dbc
 
@@ -8,6 +9,7 @@ dash.register_page(__name__, path="/")
 
 layout = html.Div(
     [
+        dcc.Location(id="home_url", refresh=True),
         html.H1("Login/Register"),
         dbc.InputGroup(
             [
@@ -20,6 +22,11 @@ layout = html.Div(
 )
 
 
-@callback(Trigger("login_user", "n_clicks"), State("user_input", "value"))
+@callback(
+    Output("home_url", "pathname"),
+    Trigger("login_user", "n_clicks"),
+    State("user_input", "value")
+)
 def login(name):
     application.login(name)
+    return "/course-breakdown"
