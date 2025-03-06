@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from src.data import User, UserDB
+from data import User, UserDB
 
 
 @dataclass
@@ -19,3 +19,6 @@ class Application:
     def get_user(self) -> User:
         return self.user_data.get_user_by_name(self.user_name)
 
+    def update_user(self, new_user: User) -> None:
+        assert new_user.name == self.user_name
+        self.user_data.set_user_by_name(self.user_name, new_user)

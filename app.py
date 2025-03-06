@@ -3,7 +3,6 @@ import dash_bootstrap_components as dbc
 from dash import html, dcc
 from dash_extensions.enrich import DashProxy, TriggerTransform
 
-
 app = DashProxy(
     __name__,
     use_pages=True,
@@ -11,7 +10,8 @@ app = DashProxy(
         "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css",
         dbc.themes.FLATLY
     ],
-    transforms=[TriggerTransform()]
+    transforms=[TriggerTransform()],
+    prevent_initial_callbacks=True,
 )
 
 app.layout = dbc.Container(dbc.Row(

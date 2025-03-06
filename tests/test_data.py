@@ -1,4 +1,4 @@
-from src.data import User, MockUserDB
+from data import User, MockUserDB
 
 
 def test_get_user_by_name():

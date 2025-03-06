@@ -2,4 +2,3 @@ pytest==8.3.4
 pytest-bdd==8.1.0
 pytest-mock
 dash[testing]
-webdriver-manager

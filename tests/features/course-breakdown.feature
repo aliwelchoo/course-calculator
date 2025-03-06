@@ -14,9 +14,9 @@ Feature: Course breakdown
     Scenario: Adding an existing module
         Given I have existing_module_name module in my course breakdown
         When I go to the course breakdown page
-        And I put an existing_module_name in the new module input
+        And I put existing_module_name in the new module input
         And I press the add module button
-        Then existing_module_name should not be in my course
+        Then existing_module_name should exist only once in my course
         And the duplicate module error should be shown
 
     Scenario: Updating an existing module
