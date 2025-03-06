@@ -10,7 +10,7 @@ def test_get_user_by_name():
 
 def test_set_user_by_name():
     data = MockUserDB([])
-    data.set_user_by_name("Alistair", User("Alistair", {"test": Module()}))
+    data.set_user(User("Alistair", {"test": Module()}))
     user = data.get_user_by_name("Alistair")
     assert user.name == "Alistair"
     assert user.get_module_names() == ["test"]
