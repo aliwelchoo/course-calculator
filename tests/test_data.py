@@ -1,8 +1,8 @@
-from data import User, MockUserDB
+from data import User, MockUserDB, Module
 
 
 def test_get_user_by_name():
-    data = MockUserDB([User("Name1", []), User("Alistair", []), User("Name2", [])])
+    data = MockUserDB([User("Name1"), User("Alistair"), User("Name2")])
     user = data.get_user_by_name("Alistair")
     assert isinstance(user, User)
     assert user.name == "Alistair"
@@ -10,7 +10,7 @@ def test_get_user_by_name():
 
 def test_set_user_by_name():
     data = MockUserDB([])
-    data.set_user_by_name("Alistair", User("Alistair", ["test"]))
+    data.set_user_by_name("Alistair", User("Alistair", {"test": Module()}))
     user = data.get_user_by_name("Alistair")
     assert user.name == "Alistair"
-    assert user.modules == ["test"]
+    assert user.get_modules() == ["test"]

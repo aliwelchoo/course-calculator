@@ -12,7 +12,7 @@ class Application:
         self.user_name = name
         user = self.user_data.get_user_by_name(name)
         if not user:
-            user = User(name, [])
+            user = User(name)
             self.user_data.set_user_by_name(name, user)
         return user
 

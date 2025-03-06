@@ -84,6 +84,6 @@ def update_modules() -> Component:
 def update_name(new_name):
     user = services.application.get_user()
     module = user.get_modules()[ctx.triggered_id["index"]]
-    user.update_module(module, new_name)
+    user.update_module_name(module, new_name)
     services.application.update_user(user)
     return dash.no_update

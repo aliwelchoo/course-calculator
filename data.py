@@ -5,26 +5,27 @@ from dataclasses import dataclass, field
 @dataclass
 class Assignment:
     credits: int
+    score: int = None
 
 
 @dataclass
 class Module:
-    assignments: list[Assignment]
+    assignments: dict[str, Assignment] = field(default_factory=dict)
 
 
 @dataclass
 class User:
     name: str
-    modules: list[Module]
+    modules: dict[str, Module] = field(default_factory=dict)
 
-    def get_modules(self) -> list[str]:
-        return self.modules
+    def get_modules(self) -> list[Module]:
+        return list(self.modules.keys())
 
     def add_module(self, module: str) -> None:
-        self.modules.append(module)
+        self.modules[module] = Module({})
 
-    def update_module(self, module: str, new_module: str) -> None:
-        self.modules[self.modules.index(module)] = new_module
+    def update_module_name(self, module: str, new_module: str) -> None:
+        self.modules[new_module] = self.modules.pop(module)
 
 
 class UserDB(ABC):
