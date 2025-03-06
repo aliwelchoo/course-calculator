@@ -9,6 +9,11 @@ from services import create_services
 scenarios("features")
 
 
+def wait_for_callbacks(dash_duo):
+    sleep(1)
+    dash_duo._wait_for_callbacks()
+
+
 @given("the site is running without error")
 def run_app(dash_duo):
     dash_duo.start_server(app, port=8060)
@@ -22,10 +27,10 @@ def logged_in_as(user):
     services.application.login(user)
 
 
-@given(parsers.parse("I have {module_name} module in my course breakdown"))
+@given(parsers.parse("I have {module_name} in my course breakdown"))
 def module_already_in_course(module_name):
     me = services.application.get_user()
-    me.modules.append(module_name)
+    me.add_module(module_name)
     services.application.update_user(me)
 
 
@@ -47,18 +52,24 @@ def existing_module_add_name(new_module_name, existing_module_name):
 @when("I press the add module button")
 def click_add_module(dash_duo):
     dash_duo.find_element("#add_module").click()
+    wait_for_callbacks(dash_duo)
 
 
 @then(parsers.parse("{module_name} should be in my course"))
 def module_in_course(module_name):
-    assert module_name in services.application.get_user().modules
+    assert module_name in services.application.get_user().get_modules()
+
+
+@then(parsers.parse("{module_name} should not be in my course"))
+def module_not_in_course(module_name):
+    assert module_name not in services.application.get_user().get_modules()
 
 
 @then(parsers.parse("{module_name} should exist only once in my course"))
 def module_not_duplicated_in_course(module_name):
-    assert services.application.get_user().modules.count(module_name) == 1
+    assert services.application.get_user().get_modules().count(module_name) == 1
 
 
 @then("the duplicate module error should be shown")
-def showing_duplicate_module_error():
-    pass
+def showing_duplicate_module_error(dash_duo):
+    assert dash_duo.find_element("#new_module_name").get_attribute("invalid")

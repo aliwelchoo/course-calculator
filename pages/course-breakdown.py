@@ -28,7 +28,7 @@ layout = dbc.Row(
 )
 def add_module(new_module_name: str) -> None:
     user = services.application.get_user()
-    if new_module_name not in user.modules:
-        user.modules.append(new_module_name)
+    if new_module_name not in user.get_modules():
+        user.add_module(new_module_name)
         services.application.update_user(user)
-    return new_module_name in user.modules
+    return new_module_name in user.get_modules()

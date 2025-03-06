@@ -17,6 +17,12 @@ class User:
     name: str
     modules: list[Module]
 
+    def get_modules(self) -> list:
+        return self.modules
+
+    def add_module(self, module: str) -> None:
+        self.modules.append(module)
+
 
 class UserDB(ABC):
     @abstractmethod

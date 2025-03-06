@@ -12,7 +12,7 @@ Feature: Course breakdown
         Then new_module_name should be in my course
 
     Scenario: Adding an existing module
-        Given I have existing_module_name module in my course breakdown
+        Given I have existing_module_name in my course breakdown
         When I go to the course breakdown page
         And I put existing_module_name in the new module input
         And I press the add module button
