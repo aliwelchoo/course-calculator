@@ -158,12 +158,14 @@ def update_modules() -> Component:
 )
 def update_all(module_names, module_credits, module_scores):
     user = services.application.get_user()
-    for module_name, module_credit, score in zip(module_names, module_credits, module_scores):
-        module = user.get_module_names()[ctx.triggered_id["index"]]
-        module.credits = module_credit
-        module.scores = score
+    modules = user.get_module_names()
+    for i, (module_name, module_credit, score) in enumerate(zip(module_names, module_credits, module_scores)):
+        module = modules[i]
+        new_module = user.modules[module]  # TODO: refactor updating module
+        new_module.credits = module_credit
+        new_module.score = score
         user.update_module_name(module, module_name)
-        user.update_module_details(module_name, module)
+        user.update_module_details(module_name, new_module)
     services.application.update_user(user)
     return (
         sum(module_credits),
@@ -183,7 +185,7 @@ def update_module(module_name, module_credit, score):
     module = user.get_module_names()[ctx.triggered_id["index"]]
     new_module = user.modules[module]
     new_module.credits = module_credit
-    new_module.scores = score
+    new_module.score = score
     user.update_module_name(module, module_name)
     user.update_module_details(module_name, new_module)
     services.application.update_user(user)
