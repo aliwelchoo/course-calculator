@@ -12,9 +12,9 @@ from services import create_services
 from selenium.webdriver.chrome.options import Options
 
 
-def new_pytest_setup_options(browser):
+def new_pytest_setup_options(_browser):
     options = Options()
-    options.add_argument("--headless")
+    # options.add_argument("--headless")
     options.add_experimental_option("excludeSwitches", ["user-data-dir"])
     return options
 
@@ -81,22 +81,12 @@ def existing_module_add_name(dash_duo, new_module_name, existing_module_name):
     )
     name_input.clear()
     name_input.send_keys(new_module_name)
+    wait_for_callbacks(dash_duo)
 
 
 @when("I press the add module button")
 def click_add_module(dash_duo):
     dash_duo.find_element("#add_module").click()
-    wait_for_callbacks(dash_duo)
-
-
-@when(parsers.parse("I press the {existing_module_name} update button"))
-def click_update_module(dash_duo, existing_module_name):
-    existing_index = (
-        services.application.get_user().get_module_names().index(existing_module_name)
-    )
-    dash_duo.find_element(
-        pattern_matching_selector(existing_index, "update_module_name")
-    ).click()
     wait_for_callbacks(dash_duo)
 
 

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
-from data import User, UserDB
+from data import UserDB
+from logic import User
 
 
 @dataclass

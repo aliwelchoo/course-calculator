@@ -1,22 +1,21 @@
 import dash
 import dash_bootstrap_components as dbc
-from dash import html, dcc, register_page, no_update, Input, ALL
+from dash import html, dcc, register_page, no_update, Input, set_props
 from dash.development.base_component import Component
 from dash_extensions.enrich import callback, ctx, Trigger, Output, State, MATCH
 
 import services
-from data import Module
+from logic import Module
 
 register_page(__name__)
 
 
-def module_input(i, module_data: (str, Module), disabled: bool = False):
-    name, module = module_data
+def module_input(i, module: Module):
     return dbc.InputGroup(
         [
             dbc.Col(
                 dbc.Input(
-                    value=name,
+                    value=module.name,
                     id={"type": "modules", "index": i},
                 ),
                 width=4,
@@ -38,14 +37,6 @@ def module_input(i, module_data: (str, Module), disabled: bool = False):
                     type="number",
                 ),
                 width=1,
-            ),
-            dbc.Col(
-                dbc.Button(
-                    "Save",
-                    id={"type": "update_module_name", "index": i},
-                    disabled=disabled,
-                ),
-                width=2,
             ),
         ]
     )
@@ -94,13 +85,6 @@ layout = dbc.Row(
                                 disabled=True,
                             ),
                             width=1,
-                        ),
-                        dbc.Col(
-                            dbc.Button(
-                                "Save",
-                                id="total_update",
-                            ),
-                            width=2,
                         ),
                     ]
                 ),
@@ -176,91 +160,43 @@ def update_modules() -> Component:
     user = services.application.get_user()
     if not user:
         return [], "/"
+    set_props("total_credits", {"value": user.total_credits})
+    set_props("total_score", {"value": user.score_so_far})
     return (
         [
             module_input(i, module)
-            for i, module in enumerate(
-                services.application.get_user().get_modules().items()
-            )
+            for i, module in enumerate(user.get_modules())
         ],
         no_update,
     )
 
 
 @callback(
-    Output("total_credits", "value"),
-    Output("total_score", "value"),
-    Trigger("total_update", "n_clicks"),
-    State({"type": "modules", "index": ALL}, "value"),
-    Input({"type": "module_credits", "index": ALL}, "value"),
-    Input({"type": "module_scores", "index": ALL}, "value"),
-)
-def update_all(module_names, module_credits, module_scores):
-    user = services.application.get_user()
-    modules = user.get_module_names()
-    for i, (module_name, module_credit, score) in enumerate(
-        zip(module_names, module_credits, module_scores)
-    ):
-        module = modules[i]
-        new_module = user.modules[module]  # TODO: refactor updating module
-        new_module.credits = module_credit
-        new_module.score = score
-        user.update_module_name(module, module_name)
-        user.update_module_details(module_name, new_module)
-    services.application.update_user(user)
-    return (
-        sum(module_credits),
-        sum(
-            module_credit * module_score / 100
-            for module_credit, module_score in zip(module_credits, module_scores)
-            if module_score is not None
-        ),
-    )
-
-
-@callback(
-    Output({"type": "update_module_name", "index": MATCH}, "n_clicks"),
-    Trigger({"type": "update_module_name", "index": MATCH}, "n_clicks"),
-    State({"type": "modules", "index": MATCH}, "value"),
-    State({"type": "module_credits", "index": MATCH}, "value"),
-    State({"type": "module_scores", "index": MATCH}, "value"),
+    Output({"type": "modules", "index": MATCH}, "value"),
+    Input({"type": "modules", "index": MATCH}, "value"),
+    Input({"type": "module_credits", "index": MATCH}, "value"),
+    Input({"type": "module_scores", "index": MATCH}, "value"),
 )
 def update_module(module_name, module_credit, score):
     user = services.application.get_user()
     module = user.get_module_names()[ctx.triggered_id["index"]]
-    new_module = user.modules[module]
-    new_module.credits = module_credit
-    new_module.score = score
     user.update_module_name(module, module_name)
-    user.update_module_details(module_name, new_module)
+    user.update_module(module_name, Module(module_name, module_credit, score))
     services.application.update_user(user)
+    set_props("total_credits", {"value": user.total_credits})
+    set_props("total_score", {"value": user.score_so_far})
     return dash.no_update
-
-
-def score_needed(total_credits, score_so_far, credits_so_far, target_score):
-    return (
-        100
-        * (total_credits * target_score - score_so_far)
-        / (total_credits - credits_so_far)
-    )
 
 
 @callback(
     Output("distinction_score", "value"),
     Output("merit_score", "value"),
     Output("pass_score", "value"),
-    Input("total_credits", "value"),
-    Input("total_score", "value"),
-    Input({"type": "module_scores", "index": ALL}, "value"),
-    Input({"type": "module_credits", "index": ALL}, "value"),
+    Trigger("total_credits", "value"),
+    Trigger("total_score", "value"),
 )
-def update_needed_scores(total_credits, total_score, module_scores, module_credits):
-    credits_so_far = sum(
-        module_credit
-        for module_credit, module_score in zip(module_credits, module_scores)
-        if module_score is not None
-    )
+def update_needed_scores():
+    user = services.application.get_user()
     return [
-        f"{score_needed(total_credits, total_score, credits_so_far, target_score):.1f}"
-        for target_score in [0.7, 0.6, 0.5]
+        f"{user.score_needed(target_score):.1f}" for target_score in [0.7, 0.6, 0.5]
     ]

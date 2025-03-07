@@ -4,32 +4,7 @@ from pathlib import Path
 
 import jsonpickle
 
-
-@dataclass
-class Module:
-    credits: int
-    score: float = None
-
-
-@dataclass
-class User:
-    name: str
-    modules: dict[str, Module] = field(default_factory=dict)
-
-    def get_module_names(self) -> list[str]:
-        return list(self.modules.keys())
-
-    def get_modules(self) -> dict[str, Module]:
-        return self.modules
-
-    def add_module(self, module: str) -> None:
-        self.modules[module] = Module({})
-
-    def update_module_name(self, module: str, new_module: str) -> None:
-        self.modules[new_module] = self.modules.pop(module)
-
-    def update_module_details(self, module_name: str, module: Module) -> None:
-        self.modules[module_name] = module
+from logic import User
 
 
 class UserDB(ABC):

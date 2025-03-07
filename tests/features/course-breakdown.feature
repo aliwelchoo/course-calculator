@@ -19,10 +19,10 @@ Feature: Course breakdown
         Then existing_module_name should exist only once in my course
         And the duplicate module error should be shown
 
+    @solo
     Scenario: Updating an existing module
         Given I have existing_module_name in my course breakdown
         When I go to the course breakdown page
         And I put new_module_name in the existing_module_name name input
-        And I press the existing_module_name update button
         Then existing_module_name should not be in my course
         And new_module_name should be in my course

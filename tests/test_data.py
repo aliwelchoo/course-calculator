@@ -1,4 +1,5 @@
-from data import User, MockUserDB
+from data import MockUserDB
+from logic import User
 
 
 def test_get_user_by_name():
