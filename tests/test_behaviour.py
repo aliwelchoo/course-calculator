@@ -10,17 +10,16 @@ from services import create_services
 
 from selenium.webdriver.chrome.options import Options
 
-scenarios("features")
 
-
-def pytest_setup_options():
+def new_pytest_setup_options():
     options = Options()
     options.add_argument('--headless')
     options.add_experimental_option("excludeSwitches", ["user-data-dir"])
     return options
 
 
-newhooks.pytest_setup_options = pytest_setup_options
+newhooks.pytest_setup_options = new_pytest_setup_options
+scenarios("features")
 
 
 def pattern_matching_selector(index: int, type: str) -> str:
