@@ -14,7 +14,7 @@ from selenium.webdriver.chrome.options import Options
 def new_pytest_setup_options():
     options = Options()
     options.add_argument('--headless')
-    options.add_experimental_option("excludeSwitches", ["user-data-dir"])
+    options.add_argument("--user-data-dir=''")
     return options
 
 
