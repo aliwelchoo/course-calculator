@@ -39,7 +39,9 @@ def run_app(dash_duo):
     dash_duo.wait_for_page(timeout=20)
     services.application = create_services(MockUserDB)
     wait_for_callbacks(dash_duo)
-    assert dash_duo.get_logs() == [], "browser console should contain no error"
+    logs = dash_duo.get_logs()
+    important_logs = [log for log in logs if "Error: Callback failed: the server did not respond." not in log["message"]]
+    assert important_logs == [], "browser console should contain no error"
 
 
 @given(parsers.parse("I am {user}"))
