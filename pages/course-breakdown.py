@@ -181,10 +181,11 @@ def update_all(module_names, module_credits, module_scores):
 def update_module(module_name, module_credit, score):
     user = services.application.get_user()
     module = user.get_module_names()[ctx.triggered_id["index"]]
-    module.credits = module_credit
-    module.scores = score
+    new_module = user.modules[module]
+    new_module.credits = module_credit
+    new_module.scores = score
     user.update_module_name(module, module_name)
-    user.update_module_details(module_name, module)
+    user.update_module_details(module_name, new_module)
     services.application.update_user(user)
     return dash.no_update
 
