@@ -2,6 +2,7 @@ from time import sleep, time
 
 from dash.testing import newhooks
 from dash.testing.browser import Browser
+from dash.testing.wait import until
 from pytest_bdd import scenarios, given, when, then, parsers
 
 import services
@@ -29,7 +30,7 @@ def pattern_matching_selector(index: int, type: str) -> str:
 
 def wait_for_callbacks(dash_duo):
     sleep(1)
-    dash_duo._wait_for_callbacks()
+    until(dash_duo._wait_for_callbacks, timeout=40, poll=0.3)
 
 
 @given("the site is running without error")
