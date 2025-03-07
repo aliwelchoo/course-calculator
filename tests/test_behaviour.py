@@ -1,6 +1,5 @@
 from time import sleep, time
 
-from dash.testing import newhooks
 from dash.testing.browser import Browser
 from pytest_bdd import scenarios, given, when, then, parsers
 
@@ -14,8 +13,8 @@ from selenium.webdriver.chrome.options import Options
 
 def new_pytest_setup_options(browser):
     options = Options()
-    options.add_argument('--headless')
-    options.add_experimental_option("excludeSwitches", ['user-data-dir'])
+    options.add_argument("--headless")
+    options.add_experimental_option("excludeSwitches", ["user-data-dir"])
     return options
 
 
@@ -24,7 +23,7 @@ scenarios("features")
 
 
 def pattern_matching_selector(index: int, type: str) -> str:
-    return r'#\{\"index\"\:' + str(index) + r'\,\"type\"\:\"' + type + r'\"\}'
+    return r"#\{\"index\"\:" + str(index) + r"\,\"type\"\:\"" + type + r"\"\}"
 
 
 def wait_for_callbacks(dash_duo):
@@ -40,7 +39,11 @@ def run_app(dash_duo):
     services.application = create_services(MockUserDB)
     wait_for_callbacks(dash_duo)
     logs = dash_duo.get_logs()
-    important_logs = [log for log in logs if "Error: Callback failed: the server did not respond." not in log["message"]]
+    important_logs = [
+        log
+        for log in logs
+        if "Error: Callback failed: the server did not respond." not in log["message"]
+    ]
     assert important_logs == [], "browser console should contain no error"
 
 
@@ -69,8 +72,12 @@ def new_module_add_name(module_name, dash_duo):
 
 @when(parsers.parse("I put {new_module_name} in the {existing_module_name} name input"))
 def existing_module_add_name(dash_duo, new_module_name, existing_module_name):
-    existing_index = services.application.get_user().get_module_names().index(existing_module_name)
-    name_input = dash_duo.find_element(pattern_matching_selector(existing_index, "modules"))
+    existing_index = (
+        services.application.get_user().get_module_names().index(existing_module_name)
+    )
+    name_input = dash_duo.find_element(
+        pattern_matching_selector(existing_index, "modules")
+    )
     name_input.clear()
     name_input.send_keys(new_module_name)
 
@@ -83,8 +90,12 @@ def click_add_module(dash_duo):
 
 @when(parsers.parse("I press the {existing_module_name} update button"))
 def click_update_module(dash_duo, existing_module_name):
-    existing_index = services.application.get_user().get_module_names().index(existing_module_name)
-    dash_duo.find_element(pattern_matching_selector(existing_index, "update_module_name")).click()
+    existing_index = (
+        services.application.get_user().get_module_names().index(existing_module_name)
+    )
+    dash_duo.find_element(
+        pattern_matching_selector(existing_index, "update_module_name")
+    ).click()
     wait_for_callbacks(dash_duo)
 
 

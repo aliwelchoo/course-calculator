@@ -14,27 +14,39 @@ def module_input(i, module_data: (str, Module), disabled: bool = False):
     name, module = module_data
     return dbc.InputGroup(
         [
-            dbc.Col(dbc.Input(
-                value=name,
-                id={"type": "modules", "index": i},
-            ), width=4),
+            dbc.Col(
+                dbc.Input(
+                    value=name,
+                    id={"type": "modules", "index": i},
+                ),
+                width=4,
+            ),
             dbc.Col(dbc.InputGroupText("Credits"), width=2),
-            dbc.Col(dbc.Input(
-                value=module.credits,
-                id={"type": "module_credits", "index": i},
-                type='number',
-            ), width=1),
+            dbc.Col(
+                dbc.Input(
+                    value=module.credits,
+                    id={"type": "module_credits", "index": i},
+                    type="number",
+                ),
+                width=1,
+            ),
             dbc.Col(dbc.InputGroupText("Score"), width=2),
-            dbc.Col(dbc.Input(
-                value=module.score,
-                id={"type": "module_scores", "index": i},
-                type='number',
-            ), width=1),
-            dbc.Col(dbc.Button(
-                "Save",
-                id={"type": "update_module_name", "index": i},
-                disabled=disabled,
-            ), width=2),
+            dbc.Col(
+                dbc.Input(
+                    value=module.score,
+                    id={"type": "module_scores", "index": i},
+                    type="number",
+                ),
+                width=1,
+            ),
+            dbc.Col(
+                dbc.Button(
+                    "Save",
+                    id={"type": "update_module_name", "index": i},
+                    disabled=disabled,
+                ),
+                width=2,
+            ),
         ]
     )
 
@@ -54,60 +66,85 @@ layout = dbc.Row(
         dbc.Row(id="modules"),
         html.Br(),
         html.Br(),
-        dbc.Row([dbc.InputGroup(
+        dbc.Row(
             [
-                dbc.Col(dbc.Input(
-                    value="Total", disabled=True,
-                ), width=4),
-                dbc.Col(dbc.InputGroupText("Total Credits"), width=2),
-                dbc.Col(dbc.Input(
-                    id="total_credits",
-                    type='number',
-                    disabled=True,
-                ), width=1),
-                dbc.Col(dbc.InputGroupText("Total Score"), width=2),
-                dbc.Col(dbc.Input(
-                    id="total_score",
-                    type='number',
-                    disabled=True,
-                ), width=1),
-                dbc.Col(dbc.Button(
-                    "Save",
-                    id="total_update",
-                ), width=2),
+                dbc.InputGroup(
+                    [
+                        dbc.Col(
+                            dbc.Input(
+                                value="Total",
+                                disabled=True,
+                            ),
+                            width=4,
+                        ),
+                        dbc.Col(dbc.InputGroupText("Total Credits"), width=2),
+                        dbc.Col(
+                            dbc.Input(
+                                id="total_credits",
+                                type="number",
+                                disabled=True,
+                            ),
+                            width=1,
+                        ),
+                        dbc.Col(dbc.InputGroupText("Total Score"), width=2),
+                        dbc.Col(
+                            dbc.Input(
+                                id="total_score",
+                                type="number",
+                                disabled=True,
+                            ),
+                            width=1,
+                        ),
+                        dbc.Col(
+                            dbc.Button(
+                                "Save",
+                                id="total_update",
+                            ),
+                            width=2,
+                        ),
+                    ]
+                ),
             ]
         ),
-        ]),
         html.Br(),
         html.Br(),
         dbc.InputGroup(
             [
                 dbc.InputGroupText("Score needed for Pass"),
-                dbc.Col(dbc.Input(
-                    id="pass_score",
-                    type='number',
-                    disabled=True,
-                ), width=1),
+                dbc.Col(
+                    dbc.Input(
+                        id="pass_score",
+                        type="number",
+                        disabled=True,
+                    ),
+                    width=1,
+                ),
             ]
         ),
         dbc.InputGroup(
             [
                 dbc.InputGroupText("Score needed for Merit"),
-                dbc.Col(dbc.Input(
-                    id="merit_score",
-                    type='number',
-                    disabled=True,
-                ), width=1),
+                dbc.Col(
+                    dbc.Input(
+                        id="merit_score",
+                        type="number",
+                        disabled=True,
+                    ),
+                    width=1,
+                ),
             ]
         ),
         dbc.InputGroup(
             [
                 dbc.InputGroupText("Score needed for Distinction"),
-                dbc.Col(dbc.Input(
-                    id="distinction_score",
-                    type='number',
-                    disabled=True,
-                ), width=1),
+                dbc.Col(
+                    dbc.Input(
+                        id="distinction_score",
+                        type="number",
+                        disabled=True,
+                    ),
+                    width=1,
+                ),
             ]
         ),
     ]
@@ -142,7 +179,9 @@ def update_modules() -> Component:
     return (
         [
             module_input(i, module)
-            for i, module in enumerate(services.application.get_user().get_modules().items())
+            for i, module in enumerate(
+                services.application.get_user().get_modules().items()
+            )
         ],
         no_update,
     )
@@ -154,12 +193,14 @@ def update_modules() -> Component:
     Trigger("total_update", "n_clicks"),
     State({"type": "modules", "index": ALL}, "value"),
     Input({"type": "module_credits", "index": ALL}, "value"),
-    Input({"type": "module_scores", "index": ALL}, "value")
+    Input({"type": "module_scores", "index": ALL}, "value"),
 )
 def update_all(module_names, module_credits, module_scores):
     user = services.application.get_user()
     modules = user.get_module_names()
-    for i, (module_name, module_credit, score) in enumerate(zip(module_names, module_credits, module_scores)):
+    for i, (module_name, module_credit, score) in enumerate(
+        zip(module_names, module_credits, module_scores)
+    ):
         module = modules[i]
         new_module = user.modules[module]  # TODO: refactor updating module
         new_module.credits = module_credit
@@ -169,7 +210,11 @@ def update_all(module_names, module_credits, module_scores):
     services.application.update_user(user)
     return (
         sum(module_credits),
-        sum(module_credit * module_score / 100 for module_credit, module_score in zip(module_credits, module_scores) if module_score is not None)
+        sum(
+            module_credit * module_score / 100
+            for module_credit, module_score in zip(module_credits, module_scores)
+            if module_score is not None
+        ),
     )
 
 
@@ -178,7 +223,7 @@ def update_all(module_names, module_credits, module_scores):
     Trigger({"type": "update_module_name", "index": MATCH}, "n_clicks"),
     State({"type": "modules", "index": MATCH}, "value"),
     State({"type": "module_credits", "index": MATCH}, "value"),
-    State({"type": "module_scores", "index": MATCH}, "value")
+    State({"type": "module_scores", "index": MATCH}, "value"),
 )
 def update_module(module_name, module_credit, score):
     user = services.application.get_user()
@@ -193,7 +238,11 @@ def update_module(module_name, module_credit, score):
 
 
 def score_needed(total_credits, score_so_far, credits_so_far, target_score):
-    return 100*(total_credits*target_score-score_so_far)/(total_credits-credits_so_far)
+    return (
+        100
+        * (total_credits * target_score - score_so_far)
+        / (total_credits - credits_so_far)
+    )
 
 
 @callback(
@@ -206,5 +255,12 @@ def score_needed(total_credits, score_so_far, credits_so_far, target_score):
     Input({"type": "module_credits", "index": ALL}, "value"),
 )
 def update_needed_scores(total_credits, total_score, module_scores, module_credits):
-    credits_so_far = sum(module_credit for module_credit, module_score in zip(module_credits, module_scores) if module_score is not None)
-    return [f"{score_needed(total_credits, total_score, credits_so_far, target_score):.1f}" for target_score in [0.7, 0.6, 0.5]]
+    credits_so_far = sum(
+        module_credit
+        for module_credit, module_score in zip(module_credits, module_scores)
+        if module_score is not None
+    )
+    return [
+        f"{score_needed(total_credits, total_score, credits_so_far, target_score):.1f}"
+        for target_score in [0.7, 0.6, 0.5]
+    ]

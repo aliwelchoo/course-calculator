@@ -25,7 +25,7 @@ layout = html.Div(
 @callback(
     Output("home_url", "pathname"),
     Trigger("login_user", "n_clicks"),
-    State("user_input", "value")
+    State("user_input", "value"),
 )
 def login(name):
     application.login(name)
