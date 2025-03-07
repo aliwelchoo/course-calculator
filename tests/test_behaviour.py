@@ -7,7 +7,7 @@ from pytest_bdd import scenarios, given, when, then, parsers
 import services
 from app import app
 from data import MockUserDB
-from services import create_logic
+from services import create_services
 
 from selenium.webdriver.chrome.options import Options
 
@@ -37,7 +37,7 @@ def run_app(dash_duo):
     dash_duo._last_ts = time()
     dash_duo.start_server(app, port=8060)
     dash_duo.wait_for_page(timeout=20)
-    services.logic = create_logic(MockUserDB)
+    services.application = create_services(MockUserDB)
     wait_for_callbacks(dash_duo)
     logs = dash_duo.get_logs()
     important_logs = [
@@ -50,14 +50,14 @@ def run_app(dash_duo):
 
 @given(parsers.parse("I am {user}"))
 def logged_in_as(user):
-    services.logic.login(user)
+    services.application.login(user)
 
 
 @given(parsers.parse("I have {module_name} in my course breakdown"))
 def module_already_in_course(module_name):
-    me = services.logic.get_user()
+    me = services.application.get_user()
     me.add_module(module_name)
-    services.logic.update_user(me)
+    services.application.update_user(me)
 
 
 @when("I go to the course breakdown page")
@@ -74,7 +74,7 @@ def new_module_add_name(module_name, dash_duo):
 @when(parsers.parse("I put {new_module_name} in the {existing_module_name} name input"))
 def existing_module_add_name(dash_duo, new_module_name, existing_module_name):
     existing_index = (
-        services.logic.get_user().get_module_names().index(existing_module_name)
+        services.application.get_user().get_module_names().index(existing_module_name)
     )
     name_input = dash_duo.find_element(
         pattern_matching_selector(existing_index, "modules")
@@ -92,7 +92,7 @@ def click_add_module(dash_duo):
 @when(parsers.parse("I press the {existing_module_name} update button"))
 def click_update_module(dash_duo, existing_module_name):
     existing_index = (
-        services.logic.get_user().get_module_names().index(existing_module_name)
+        services.application.get_user().get_module_names().index(existing_module_name)
     )
     dash_duo.find_element(
         pattern_matching_selector(existing_index, "update_module_name")
@@ -102,17 +102,17 @@ def click_update_module(dash_duo, existing_module_name):
 
 @then(parsers.parse("{module_name} should be in my course"))
 def module_in_course(module_name):
-    assert module_name in services.logic.get_user().get_module_names()
+    assert module_name in services.application.get_user().get_module_names()
 
 
 @then(parsers.parse("{module_name} should not be in my course"))
 def module_not_in_course(module_name):
-    assert module_name not in services.logic.get_user().get_module_names()
+    assert module_name not in services.application.get_user().get_module_names()
 
 
 @then(parsers.parse("{module_name} should exist only once in my course"))
 def module_not_duplicated_in_course(module_name):
-    assert services.logic.get_user().get_module_names().count(module_name) == 1
+    assert services.application.get_user().get_module_names().count(module_name) == 1
 
 
 @then("the duplicate module error should be shown")

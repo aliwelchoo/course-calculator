@@ -4,7 +4,7 @@ from data import User, UserDB
 
 
 @dataclass
-class Logic:
+class Application:
     user_name: str
     user_data: UserDB
 
@@ -22,11 +22,3 @@ class Logic:
     def update_user(self, new_user: User) -> None:
         assert new_user.name == self.user_name
         self.user_data.set_user(new_user)
-
-
-def score_needed(total_credits, score_so_far, credits_so_far, target_score):
-    return (
-        100
-        * (total_credits * target_score - score_so_far)
-        / (total_credits - credits_so_far)
-    )
