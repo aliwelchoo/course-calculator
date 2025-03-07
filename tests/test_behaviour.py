@@ -8,11 +8,7 @@ from data import MockUserDB
 from services import create_services
 
 scenarios("features")
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
 
-webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 def pattern_matching_selector(index: int, type: str) -> str:
     return r'#\{\"index\"\:' + str(index)+r'\,\"type\"\:\"'+type+r'\"\}'
