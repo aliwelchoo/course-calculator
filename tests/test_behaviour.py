@@ -1,6 +1,7 @@
 from time import sleep, time
 
 from dash.testing import newhooks
+from dash.testing.browser import Browser
 from pytest_bdd import scenarios, given, when, then, parsers
 
 import services
@@ -11,14 +12,14 @@ from services import create_services
 from selenium.webdriver.chrome.options import Options
 
 
-def new_pytest_setup_options():
+def new_pytest_setup_options(browser):
     options = Options()
     options.add_argument('--headless')
-    options.add_argument("--user-data-dir=''")
+    options.add_experimental_option("excludeSwitches", ['user-data-dir'])
     return options
 
 
-newhooks.pytest_setup_options = new_pytest_setup_options
+Browser._get_wd_options = new_pytest_setup_options
 scenarios("features")
 
 
