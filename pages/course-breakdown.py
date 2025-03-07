@@ -163,10 +163,7 @@ def update_modules() -> Component:
     set_props("total_credits", {"value": user.total_credits})
     set_props("total_score", {"value": user.score_so_far})
     return (
-        [
-            module_input(i, module)
-            for i, module in enumerate(user.get_modules())
-        ],
+        [module_input(i, module) for i, module in enumerate(user.get_modules())],
         no_update,
     )
 

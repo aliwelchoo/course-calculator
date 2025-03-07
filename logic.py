@@ -20,7 +20,14 @@ class User:
         return self.modules
 
     def get_module_by_name(self, module_name: str) -> Module:
-        return next(((i, module) for i, module in enumerate(self.modules) if module.name == module_name), None)
+        return next(
+            (
+                (i, module)
+                for i, module in enumerate(self.modules)
+                if module.name == module_name
+            ),
+            None,
+        )
 
     def add_module(self, module: str) -> None:
         self.modules.append(Module(module))
@@ -49,9 +56,7 @@ class User:
     @property
     def credits_so_far(self):
         return sum(
-            module.credits
-            for module in self.modules
-            if module.score is not None
+            module.credits for module in self.modules if module.score is not None
         )
 
     def score_needed(self, target_score):
