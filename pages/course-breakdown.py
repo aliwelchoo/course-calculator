@@ -152,7 +152,7 @@ def update_modules() -> Component:
     Output("total_credits", "value"),
     Output("total_score", "value"),
     Trigger("total_update", "n_clicks"),
-    Input({"type": "modules", "index": ALL}, "value"),
+    State({"type": "modules", "index": ALL}, "value"),
     Input({"type": "module_credits", "index": ALL}, "value"),
     Input({"type": "module_scores", "index": ALL}, "value")
 )

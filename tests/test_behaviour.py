@@ -7,11 +7,20 @@ from app import app
 from data import MockUserDB
 from services import create_services
 
+from selenium.webdriver.chrome.options import Options
+
 scenarios("features")
 
 
+def pytest_setup_options():
+    options = Options()
+    options.add_argument('--headless')
+    options.add_experimental_option("excludeSwitches", ["user-data-dir"])
+    return options
+
+
 def pattern_matching_selector(index: int, type: str) -> str:
-    return r'#\{\"index\"\:' + str(index)+r'\,\"type\"\:\"'+type+r'\"\}'
+    return r'#\{\"index\"\:' + str(index) + r'\,\"type\"\:\"' + type + r'\"\}'
 
 
 def wait_for_callbacks(dash_duo):
