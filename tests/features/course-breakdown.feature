@@ -19,7 +19,6 @@ Feature: Course breakdown
         Then existing_module_name should exist only once in my course
         And the duplicate module error should be shown
 
-    @solo
     Scenario: Updating an existing module
         Given I have existing_module_name in my course breakdown
         When I go to the course breakdown page
