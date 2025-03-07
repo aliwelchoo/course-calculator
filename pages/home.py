@@ -3,7 +3,7 @@ from dash import dcc, Output
 from dash_extensions.enrich import html, callback, State, Trigger
 import dash_bootstrap_components as dbc
 
-from services import application
+from services import logic
 
 dash.register_page(__name__, path="/")
 
@@ -28,5 +28,5 @@ layout = html.Div(
     State("user_input", "value"),
 )
 def login(name):
-    application.login(name)
+    logic.login(name)
     return "/course-breakdown"

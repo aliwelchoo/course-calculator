@@ -1,13 +1,13 @@
 from typing import Type
 
-from application import Application
+from logic import Logic
 from data import UserDB, JsonUserDB
 
 
-def create_services(db: Type[UserDB]) -> Application:
+def create_logic(db: Type[UserDB]) -> Logic:
     data: UserDB = db()
-    app: Application = Application(None, data)
+    app: Logic = Logic(None, data)
     return app
 
 
-application: Application = create_services(JsonUserDB)
+logic: Logic = create_logic(JsonUserDB)

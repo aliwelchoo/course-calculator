@@ -6,6 +6,7 @@ from dash_extensions.enrich import callback, ctx, Trigger, Output, State, MATCH
 
 import services
 from data import Module
+from logic import score_needed
 
 register_page(__name__)
 
@@ -158,10 +159,10 @@ layout = dbc.Row(
     State("new_module_name", "value"),
 )
 def add_module(new_module_name: str) -> None:
-    user = services.application.get_user()
+    user = services.logic.get_user()
     if new_module_name not in user.get_module_names():
         user.add_module(new_module_name)
-        services.application.update_user(user)
+        services.logic.update_user(user)
         return False, ""
     return True, no_update
 
@@ -173,14 +174,14 @@ def add_module(new_module_name: str) -> None:
     Trigger("course_url", "pathname"),
 )
 def update_modules() -> Component:
-    user = services.application.get_user()
+    user = services.logic.get_user()
     if not user:
         return [], "/"
     return (
         [
             module_input(i, module)
             for i, module in enumerate(
-                services.application.get_user().get_modules().items()
+                services.logic.get_user().get_modules().items()
             )
         ],
         no_update,
@@ -196,7 +197,7 @@ def update_modules() -> Component:
     Input({"type": "module_scores", "index": ALL}, "value"),
 )
 def update_all(module_names, module_credits, module_scores):
-    user = services.application.get_user()
+    user = services.logic.get_user()
     modules = user.get_module_names()
     for i, (module_name, module_credit, score) in enumerate(
         zip(module_names, module_credits, module_scores)
@@ -207,7 +208,7 @@ def update_all(module_names, module_credits, module_scores):
         new_module.score = score
         user.update_module_name(module, module_name)
         user.update_module_details(module_name, new_module)
-    services.application.update_user(user)
+    services.logic.update_user(user)
     return (
         sum(module_credits),
         sum(
@@ -226,23 +227,15 @@ def update_all(module_names, module_credits, module_scores):
     State({"type": "module_scores", "index": MATCH}, "value"),
 )
 def update_module(module_name, module_credit, score):
-    user = services.application.get_user()
+    user = services.logic.get_user()
     module = user.get_module_names()[ctx.triggered_id["index"]]
     new_module = user.modules[module]
     new_module.credits = module_credit
     new_module.score = score
     user.update_module_name(module, module_name)
     user.update_module_details(module_name, new_module)
-    services.application.update_user(user)
+    services.logic.update_user(user)
     return dash.no_update
-
-
-def score_needed(total_credits, score_so_far, credits_so_far, target_score):
-    return (
-        100
-        * (total_credits * target_score - score_so_far)
-        / (total_credits - credits_so_far)
-    )
 
 
 @callback(
