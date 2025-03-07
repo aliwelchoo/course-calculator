@@ -180,9 +180,7 @@ def update_modules() -> Component:
     return (
         [
             module_input(i, module)
-            for i, module in enumerate(
-                services.logic.get_user().get_modules().items()
-            )
+            for i, module in enumerate(services.logic.get_user().get_modules().items())
         ],
         no_update,
     )
