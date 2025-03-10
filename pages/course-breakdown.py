@@ -2,6 +2,7 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import html, dcc, register_page, no_update, Input, set_props
 from dash.development.base_component import Component
+from dash.exceptions import PreventUpdate
 from dash_extensions.enrich import callback, ctx, Trigger, Output, State, MATCH
 
 import services
@@ -154,14 +155,16 @@ def add_module(new_module_name: str) -> None:
     Output("modules", "children"),
     Output("course_url", "pathname"),
     Trigger("add_module", "n_clicks"),
-    Trigger("course_url", "pathname"),
+    Input("course_url", "pathname"),
 )
-def update_modules() -> Component:
+def update_modules(course_url) -> Component:
     user = services.application.get_user()
+    if course_url != '/course-breakdown':
+        raise PreventUpdate
     if not user:
         return [], "/"
     set_props("total_credits", {"value": user.total_credits})
-    set_props("total_score", {"value": user.score_so_far})
+    set_props("total_score", {"value": f"{user.score_so_far:.1f}"})
     return (
         [module_input(i, module) for i, module in enumerate(user.get_modules())],
         no_update,
@@ -181,7 +184,7 @@ def update_module(module_name, module_credit, score):
     user.update_module(module_name, Module(module_name, module_credit, score))
     services.application.update_user(user)
     set_props("total_credits", {"value": user.total_credits})
-    set_props("total_score", {"value": user.score_so_far})
+    set_props("total_score", {"value": f"{user.score_so_far:.1f}"})
     return dash.no_update
 
 
