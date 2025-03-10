@@ -61,7 +61,11 @@ class User:
 
     @property
     def score_so_far(self) -> float:
-        return 100 * self.credits_so_far / self.total_credits_so_far if self.total_credits_so_far else 0
+        return (
+            100 * self.credits_so_far / self.total_credits_so_far
+            if self.total_credits_so_far
+            else 0
+        )
 
     def score_needed(self, target_score) -> float:
         return (

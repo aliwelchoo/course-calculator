@@ -159,7 +159,7 @@ def add_module(new_module_name: str) -> None:
 )
 def update_modules(course_url) -> Component:
     user = services.application.get_user()
-    if course_url != '/course-breakdown':
+    if course_url != "/course-breakdown":
         raise PreventUpdate
     if not user:
         return [], "/"
