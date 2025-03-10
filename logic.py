@@ -42,11 +42,11 @@ class User:
         self.modules[i] = module
 
     @property
-    def total_credits(self):
+    def total_credits(self) -> int:
         return sum(module.credits for module in self.modules if module.credits)
 
     @property
-    def credits_so_far(self):
+    def credits_so_far(self) -> int:
         return sum(
             module.credits * module.score / 100
             for module in self.modules
@@ -54,16 +54,16 @@ class User:
         )
 
     @property
-    def total_credits_so_far(self):
+    def total_credits_so_far(self) -> int:
         return sum(
             module.credits for module in self.modules if module.score is not None
         )
 
     @property
-    def score_so_far(self):
-        return 100 * self.credits_so_far / self.total_credits_so_far
+    def score_so_far(self) -> float:
+        return 100 * self.credits_so_far / self.total_credits_so_far if self.total_credits_so_far else 0
 
-    def score_needed(self, target_score):
+    def score_needed(self, target_score) -> float:
         return (
             100
             * (self.total_credits * target_score - self.credits_so_far)
